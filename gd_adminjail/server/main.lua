@@ -48,7 +48,14 @@ local function jailPlayer(targetSrc, time, reason, adminSrc)
 end
 
 -- Commands
-lib.addCommand(Config.AdminGroups, Config.Commands.jail, function(source, args)
+lib.addCommand(Config.Commands.jail, {
+    restricted = Config.AdminGroups,
+    params = {
+        { name = "target", help = "Player ID", type = "number" },
+        { name = "time", help = "Time in minutes", type = "number" },
+        { name = "reason", help = "Reason for jail", type = "string", optional = true }
+    }
+}, function(source, args)
     local target = args.target
     local time = args.time
     local reason = args.reason or "No reason provided"
@@ -58,15 +65,12 @@ lib.addCommand(Config.AdminGroups, Config.Commands.jail, function(source, args)
     end
 
     jailPlayer(target, time, reason, source)
-end, {
-    params = {
-        { name = "target", help = "Player ID", type = "number" },
-        { name = "time", help = "Time in minutes", type = "number" },
-        { name = "reason", help = "Reason for jail", type = "string", optional = true }
-    }
-})
+end)
 
-lib.addCommand(Config.AdminGroups, Config.Commands.unjail, function(source, args)
+lib.addCommand(Config.Commands.unjail, {
+    restricted = Config.AdminGroups,
+    params = { { name = "target", help = "Player ID", type = "number" } }
+}, function(source, args)
     local target = args.target
     local player = exports.qbx_core:GetPlayer(target)
     if not player then return end
@@ -80,9 +84,7 @@ lib.addCommand(Config.AdminGroups, Config.Commands.unjail, function(source, args
     end
 
     TriggerClientEvent("adminjail:client:Release", target)
-end, {
-    params = { { name = "target", help = "Player ID", type = "number" } }
-})
+end)
 
 -- Time Tracking Loop
 CreateThread(function()
